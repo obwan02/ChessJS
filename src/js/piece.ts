@@ -53,24 +53,25 @@ class Pawn extends Piece {
 
     getMoves(state: ChessState): Position[] {
 
-        var array = []
+        var result = []
 
         //Find possible moves
         {
             let mod = this.firstMove ? this.yMod * 2 : this.yMod;
             let mov = state.getFurthestPath(this, this.position, new Position(this.position.getx(), this.position.gety() + mod));
-            array = array.concat(mov);
+            console.log(mov);
+            result = result.concat(mov);
         }
 
         //Find possible attacks
         {
             let testPos1 = new Position(this.position.getx()-1, this.position.gety() + this.yMod);
             let testPos2 = new Position(this.position.getx()+1, this.position.gety() + this.yMod);
-            if(state.getPiece(testPos1).getName() != 'empty') array.push(testPos1);
-            if(state.getPiece(testPos2).getName() != 'empty') array.push(testPos2);
+            if(state.isVaild(testPos1) && state.getPiece(testPos1).getName() != 'empty') result.push(testPos1);
+            if(state.isVaild(testPos2) && state.getPiece(testPos2).getName() != 'empty') result.push(testPos2);
         }
 
-        return this.filter(array);
+        return this.filter(result);
     }
 
     getName(): string {
@@ -89,13 +90,15 @@ class Rook extends Piece {
     }
     
     getMoves(state: ChessState): Position[] {
-        [-1, 0, 1, 0].forEach((x) => {
-            [0, -1, 0, 1].forEach((y) => {
-                let pos = new Position(x, y);
-                state.getFurthestAttack
-            });
-        });
-        return null;
+        let result = [];
+        let a1 = [-1, 0, 1, 0];
+        let a2 = [0, -1, 0, 1];
+        for(let i = 0; i < 4; i++) {
+            let pos = new Position(this.position.getx()+a1[i], this.position.gety()+a2[i]);
+            result = result.concat(state.getFurthestAttack(this, this.position, pos));
+        }
+
+        return this.filter(result);
     }
 
     getName(): string {

@@ -54,6 +54,10 @@ class ChessState {
         this.board[3 + 7 * WIDTH] = new Queen(new Position(3, 7), Side.BLACK);
         this.board[4 + 7 * WIDTH] = new King(new Position(4, 7), Side.BLACK);
     }
+    isVaild(pos) {
+        return pos.getx() >= 0 && pos.getx() < WIDTH
+            && pos.gety() >= 0 && pos.gety() < HEIGHT;
+    }
     getPiece(pos) {
         var result = null;
         this.board.forEach(element => {
@@ -66,11 +70,11 @@ class ChessState {
     }
     getFurthestPath(self, pos1, pos2) {
         var result = [];
-        let definition = 8;
-        pos2 = new Position(pos2.getx() + 0.5, pos2.gety() + 0.5);
+        let definition = 10;
+        pos2 = new Position(pos2.getx(), pos2.gety());
         let dx = (pos2.getx() - pos1.getx()) / definition;
         let dy = (pos2.gety() - pos1.gety()) / definition;
-        for (let i = 0; i < definition; i++) {
+        for (let i = 1; i <= definition; i++) {
             let x = pos1.getx() + Math.floor(dx * i);
             let y = pos1.gety() + Math.floor(dy * i);
             let pos = new Position(x, y);
@@ -91,11 +95,11 @@ class ChessState {
     }
     getFurthestAttack(self, pos1, pos2) {
         var result = [];
-        let definition = 8;
-        pos2 = new Position(pos2.getx() + 0.5, pos2.gety() + 0.5);
+        let definition = 10;
+        pos2 = new Position(pos2.getx(), pos2.gety());
         let dx = pos2.getx() - pos1.getx() / definition;
         let dy = pos2.gety() - pos2.gety() / definition;
-        for (let i = 0; i < definition; i++) {
+        for (let i = 1; i <= definition; i++) {
             let x = pos1.getx() + Math.floor(dx * i);
             let y = pos1.gety() + Math.floor(dy * i);
             let pos = new Position(x, y);
@@ -103,8 +107,9 @@ class ChessState {
             if (piece == null)
                 return result;
             if (piece.getName() != 'empty')
-                if (piece != self) {
-                    result.push(pos);
+                if (piece.position.equals(self.position)) {
+                    if (piece.getSide() != self.getSide())
+                        result.push(pos);
                     return result;
                 }
             let dup = false;
