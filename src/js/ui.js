@@ -29,7 +29,8 @@ const imgs = {
     'king': {
         'white': loadImage('king_white.png'),
         'black': loadImage('king_black.png')
-    }
+    },
+    'dot': loadImage('dot.png')
 };
 function draw(manager, ctx) {
     ctx.clearRect(0, 0, TILE_SIZE * WIDTH, TILE_SIZE * HEIGHT);
@@ -57,9 +58,7 @@ function draw(manager, ctx) {
     if (manager.moves) {
         manager.moves.forEach(element => {
             let x = element.getx(), y = element.gety();
-            ctx.strokeStyle = '#000000';
-            ctx.lineWidth = 3;
-            ctx.strokeRect(TILE_SIZE * x, TILE_SIZE * y, TILE_SIZE, TILE_SIZE);
+            ctx.drawImage(imgs['dot'], x * TILE_SIZE, y * TILE_SIZE, TILE_SIZE, TILE_SIZE);
         });
     }
 }

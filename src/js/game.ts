@@ -98,7 +98,6 @@ class ChessState {
         var result: Position[] = [];
 
         let definition = 10;
-        pos2 = new Position(pos2.getx(), pos2.gety());
         let dx = (pos2.getx() - pos1.getx()) / definition;
         let dy = (pos2.gety() - pos1.gety()) / definition;
 
@@ -128,23 +127,24 @@ class ChessState {
         var result: Position[] = []
 
         let definition = 10;
-        pos2 = new Position(pos2.getx(), pos2.gety());
-        let dx = pos2.getx() - pos1.getx() / definition;
-        let dy = pos2.gety() - pos2.gety() / definition;
+        let dx = (pos2.getx() - pos1.getx()) / definition;
+        let dy = (pos2.gety() - pos1.gety()) / definition;
         
         for(let i = 1; i <= definition; i++) {
             let x = pos1.getx() + Math.floor(dx * i);
             let y = pos1.gety() + Math.floor(dy * i);
             let pos = new Position(x, y);
             let piece = this.getPiece(pos);
-            
+            console.log(pos);
+
             if(piece == null) 
                 return result;
-            if(piece.getName() != 'empty')
-                if(piece.position.equals(self.position)) {
+            if(piece.getName() != 'empty'){
+                if(!piece.position.equals(self.position)) {
                     if(piece.getSide() != self.getSide()) result.push(pos);
                     return result; 
                 }  
+            }
             
             let dup = false
             result.forEach((i) => {
