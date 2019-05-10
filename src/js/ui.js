@@ -31,18 +31,22 @@ const imgs = {
         'black': loadImage('king_black.png')
     }
 };
-function draw(state, ctx) {
+function draw(manager, ctx) {
     ctx.clearRect(0, 0, TILE_SIZE * WIDTH, TILE_SIZE * HEIGHT);
     var count = 0;
-    state.board.forEach((i) => {
+    manager.state.board.forEach((i) => {
         let x = i.position.getx();
         let y = i.position.gety();
         //Fill board background
         ctx.fillStyle = ((x + y) % 2) ? "#99610d" : "#fca21b";
         ctx.fillRect(TILE_SIZE * x, TILE_SIZE * y, TILE_SIZE, TILE_SIZE);
+        if (manager.selected && manager.selected.equals(i.position)) {
+            ctx.fillStyle = "rgba(1,1,1,0.1)";
+            ctx.fillRect(TILE_SIZE * x, TILE_SIZE * y, TILE_SIZE, TILE_SIZE);
+        }
         count++;
     });
-    state.board.forEach(i => {
+    manager.state.board.forEach(i => {
         let x = i.position.getx();
         let y = i.position.gety();
         if (i.getName() != 'empty') {
@@ -50,5 +54,13 @@ function draw(state, ctx) {
             ctx.drawImage(image, TILE_SIZE * x, TILE_SIZE * y, TILE_SIZE, TILE_SIZE);
         }
     });
+    if (manager.moves) {
+        manager.moves.forEach(element => {
+            let x = element.getx(), y = element.gety();
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(TILE_SIZE * x, TILE_SIZE * y, TILE_SIZE, TILE_SIZE);
+        });
+    }
 }
 export { draw, TILE_SIZE };

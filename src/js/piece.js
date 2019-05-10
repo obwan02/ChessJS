@@ -13,6 +13,14 @@ class Piece {
     move(pos) {
         this.position = pos;
     }
+    filter(moves) {
+        var result = [];
+        moves.forEach(element => {
+            if (element && !element.equals(this.position))
+                result.push(element);
+        });
+        return result;
+    }
 }
 class Empty extends Piece {
     constructor(pos) {
@@ -30,13 +38,23 @@ class Pawn extends Piece {
         this.yMod = this.getSide() == Side.BLACK ? -1 : 1;
     }
     getMoves(state) {
-        let double = this.firstMove ? 2 : 1;
-        let ychange = this.yMod * double;
-        let array = [];
-        let testPos = new Position(this.position.getx(), this.position.gety() + ychange);
-        let result = state.getFurthestPath(this, this.position, testPos);
-        console.log(result);
-        return null;
+        var array = [];
+        //Find possible moves
+        {
+            let mod = this.firstMove ? this.yMod * 2 : this.yMod;
+            let mov = state.getFurthestPath(this, this.position, new Position(this.position.getx(), this.position.gety() + mod));
+            array = array.concat(mov);
+        }
+        //Find possible attacks
+        {
+            let testPos1 = new Position(this.position.getx() - 1, this.position.gety() + this.yMod);
+            let testPos2 = new Position(this.position.getx() + 1, this.position.gety() + this.yMod);
+            if (state.getPiece(testPos1).getName() != 'empty')
+                array.push(testPos1);
+            if (state.getPiece(testPos2).getName() != 'empty')
+                array.push(testPos2);
+        }
+        return this.filter(array);
     }
     getName() {
         return 'pawn';
@@ -51,6 +69,12 @@ class Rook extends Piece {
         super(pos, side);
     }
     getMoves(state) {
+        [-1, 0, 1, 0].forEach((x) => {
+            [0, -1, 0, 1].forEach((y) => {
+                let pos = new Position(x, y);
+                state.getFurthestAttack;
+            });
+        });
         return null;
     }
     getName() {

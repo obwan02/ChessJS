@@ -1,4 +1,5 @@
-import { ChessState, WIDTH, HEIGHT } from "./game.js"
+import GameManager from "./main.js"
+import { WIDTH, HEIGHT } from "./game.js"
 
 const TILE_SIZE = 90;
 
@@ -40,23 +41,29 @@ const imgs = {
     }
 }
 
-function draw(state: ChessState, ctx: CanvasRenderingContext2D) {
+function draw(manager: GameManager, ctx: CanvasRenderingContext2D) {
     ctx.clearRect(0, 0, TILE_SIZE * WIDTH, TILE_SIZE * HEIGHT);
     
     var count = 0;
-    state.board.forEach((i) => {
+    manager.state.board.forEach((i) => {
 
         let x = i.position.getx();
         let y = i.position.gety();
         
         //Fill board background
-        ctx.fillStyle = ((x + y) % 2) ? "#99610d" : "#fca21b"; 
-        
+        ctx.fillStyle = ((x + y) % 2) ? "#99610d" : "#fca21b";
         ctx.fillRect(TILE_SIZE*x, TILE_SIZE*y, TILE_SIZE, TILE_SIZE);
+        
+        if(manager.selected && manager.selected.equals(i.position)) {
+            ctx.fillStyle  = "rgba(1,1,1,0.1)"
+            ctx.fillRect(TILE_SIZE*x, TILE_SIZE*y, TILE_SIZE, TILE_SIZE);
+        }
+
         count++;
     });
-
-    state.board.forEach(i => {
+    
+    
+    manager.state.board.forEach(i => {
         let x = i.position.getx();
         let y = i.position.gety();
         if(i.getName() != 'empty') {
@@ -64,6 +71,16 @@ function draw(state: ChessState, ctx: CanvasRenderingContext2D) {
             ctx.drawImage(image, TILE_SIZE*x, TILE_SIZE*y, TILE_SIZE, TILE_SIZE);
         }
     });
+    
+    if(manager.moves) {
+        manager.moves.forEach(element => {
+            let x=element.getx(), y=element.gety();
+            ctx.strokeStyle = '#000000';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(TILE_SIZE*x, TILE_SIZE*y, TILE_SIZE, TILE_SIZE);
+        });
+    }
+
 }
 
 export { draw, TILE_SIZE }

@@ -32,6 +32,10 @@ class Position {
     gety() {
         return this.y;
     }
+
+    equals(other: Position) {
+        return this.x == other.getx() && this.y == other.gety();
+    }
 }
 
 class ChessState {
@@ -84,13 +88,15 @@ class ChessState {
         return result;
     }
 
-    getFurthestPath(self: Piece, pos1: Position, pos2: Position): Position {
+    getFurthestPath(self: Piece, pos1: Position, pos2: Position): Position[] {
         
+        var result: Position[] = [];
+
         let definition = 8;
-        let dx = pos2.getx() - pos1.getx() / definition;
-        let dy = pos2.gety() - pos2.gety() / definition;
-        
-        var prevPos = pos1;
+        pos2 = new Position(pos2.getx()+0.5, pos2.gety()+0.5);
+        let dx = (pos2.getx() - pos1.getx()) / definition;
+        let dy = (pos2.gety() - pos1.gety()) / definition;
+
         for(let i = 0; i < definition; i++) {
             let x = pos1.getx() + Math.floor(dx * i);
             let y = pos1.gety() + Math.floor(dy * i);
@@ -98,23 +104,29 @@ class ChessState {
             let piece = this.getPiece(pos);
             
             if(piece == null) 
-                return prevPos;
+                return result;
             if(piece.getName() != 'empty')
-                if(piece != self) return prevPos
+                if(!piece.position.equals(self.position)) return result;
 
-            prevPos = pos;
+            let dup = false
+            result.forEach((i) => {
+                dup = dup || i.equals(pos);
+            });
+            if(!dup) result.push(pos);
         }
 
-        return prevPos;
+        return result;
     }
 
-    getFurthestAttack(self: Piece, pos1: Position, pos2: Position): Position {
+    getFurthestAttack(self: Piece, pos1: Position, pos2: Position): Position[] {
         
+        var result: Position[] = []
+
         let definition = 8;
+        pos2 = new Position(pos2.getx()+0.5, pos2.gety()+0.5);
         let dx = pos2.getx() - pos1.getx() / definition;
         let dy = pos2.gety() - pos2.gety() / definition;
         
-        var prevPos = pos1;
         for(let i = 0; i < definition; i++) {
             let x = pos1.getx() + Math.floor(dx * i);
             let y = pos1.gety() + Math.floor(dy * i);
@@ -122,14 +134,21 @@ class ChessState {
             let piece = this.getPiece(pos);
             
             if(piece == null) 
-                return prevPos;
+                return result;
             if(piece.getName() != 'empty')
-                if(piece != self) return pos;
-
-            prevPos = pos;
+                if(piece != self) {
+                    result.push(pos);
+                    return result; 
+                }  
+            
+            let dup = false
+            result.forEach((i) => {
+                dup = dup || i.equals(pos);
+            });
+            if(!dup) result.push(pos);
         }
 
-        return prevPos;
+        return result;
     }
 }
 
