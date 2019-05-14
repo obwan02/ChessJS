@@ -51,10 +51,13 @@ class GameManager {
             let piece = this.state.getPiece(this.selected);
             let target_index = this.state.board.indexOf(target);
             let piece_index = this.state.board.indexOf(piece);
-            piece.move(pos);
+            piece.move(this.state, pos);
             this.state.board[target_index] = new Empty(this.selected);
             this.state.board[piece_index] = piece;
             this.turn = this.turn == Side.WHITE ? Side.BLACK : Side.WHITE;
+        }
+        if (this.state.won != Side.EMPTY) {
+            console.log((this.state.won == Side.WHITE ? 'White' : 'Black') + ' has won');
         }
         this.selected = null;
         this.moves = null;

@@ -76,7 +76,7 @@ function draw(manager: GameManager, ctx: CanvasRenderingContext2D) {
     
     if(manager.moves) {
         manager.moves.forEach(element => {
-            let x=element.getx(), y=element.gety();
+            let x=element.getx(), y=element.gety(); 
             ctx.drawImage(imgs['dot'], x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
         });
     }

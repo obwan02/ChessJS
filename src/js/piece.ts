@@ -14,7 +14,11 @@ abstract class Piece {
         return this.side == Side.BLACK ? 'black' : this.side == Side.WHITE ? 'white' : 'empty'
     }
 
-    move(pos: Position) {
+    move(state: ChessState, pos: Position) {
+        if(state.getPiece(pos).getName() == 'king') {
+            state.win(this.side);
+        }
+
         this.position = pos;
     }
 
@@ -79,8 +83,8 @@ class Pawn extends Piece {
         return 'pawn';
     }
 
-    move(pos: Position) {
-        super.move(pos);
+    move(state: ChessState, pos: Position) {
+        super.move(state, pos);
         this.firstMove = false;
     }
 }
@@ -99,7 +103,6 @@ class Rook extends Piece {
             result = result.concat(state.getFurthestAttack(this, this.position, pos));
         }
 
-        console.log(result);
         return this.filter(result);
     }
 
@@ -114,7 +117,15 @@ class Bishop extends Piece {
     }
     
     getMoves(state: ChessState): Position[] {
-        return null;
+        let result = [];
+        let a1 = [-8, 8, 8, -8];
+        let a2 = [-8, 8, -8, 8];
+        for(let i = 0; i < 4; i++) {
+            let pos = new Position(this.position.getx()+a1[i], this.position.gety()+a2[i]);
+            result = result.concat(state.getFurthestAttack(this, this.position, pos));
+        }
+        
+        return this.filter(result);
     }
 
     getName(): string {
@@ -128,7 +139,20 @@ class Knight extends Piece {
     }
     
     getMoves(state: ChessState): Position[] {
-        return null;
+        const xvals = [-1, -1, 1, 1, -2, -2, 2, 2];
+        const yvals = [-2,  2,-2, 2, -1,  1,-1, 1];
+
+        var result = [];
+        for(let i = 0; i < xvals.length; i++){
+            let x = this.position.getx()+xvals[i];
+            let y = this.position.gety()+yvals[i];
+            let pos = new Position(x, y)
+            let piece = state.getPiece(pos);
+
+            if(piece != null && piece.getSide() != this.getSide())
+                result.push(pos);
+        }
+        return result;
     }
 
     getName(): string {
@@ -142,7 +166,21 @@ class King extends Piece {
     }
     
     getMoves(state: ChessState): Position[] {
-        return null;
+        const xvals = [-1, 0, 1, 1, 1, 0, -1, -1];
+        const yvals = [1, 1, 1, 0, -1, -1 -1 , 0];
+
+        var result = [];
+        for(let i = 0; i < xvals.length; i++){
+            let x = this.position.getx()+xvals[i];
+            let y = this.position.gety()+yvals[i];
+            let pos = new Position(x, y)
+            let piece = state.getPiece(pos);
+
+            if(piece != null && piece.getSide() != this.getSide())
+                result.push(pos);
+        }
+
+        return result;
     }
 
     getName(): string {
@@ -156,7 +194,27 @@ class Queen extends Piece {
     }
     
     getMoves(state: ChessState): Position[] {
-        return null;
+        var result = [];
+        var a1 = [-8, 8, 8, -8];
+        var a2 = [-8, 8, -8, 8];
+        for(let i = 0; i < 4; i++) {
+            let pos = new Position(this.position.getx()+a1[i], this.position.gety()+a2[i]);
+            result = result.concat(state.getFurthestAttack(this, this.position, pos));
+        }
+        
+        let bish = this.filter(result);
+
+        var result = [];
+        var a1 = [-8, 0, 8, 0];
+        var a2 = [0, -8, 0, 8];
+        for(let i = 0; i < 4; i++) {
+            let pos = new Position(this.position.getx()+a1[i], this.position.gety()+a2[i]);
+            result = result.concat(state.getFurthestAttack(this, this.position, pos));
+        }
+
+        let rook = this.filter(result);
+        
+        return bish.concat(rook);
     }
 
     getName(): string {

@@ -53,6 +53,10 @@ class ChessState {
         this.board[4] = new King(new Position(4, 0), Side.WHITE);
         this.board[3 + 7 * WIDTH] = new Queen(new Position(3, 7), Side.BLACK);
         this.board[4 + 7 * WIDTH] = new King(new Position(4, 7), Side.BLACK);
+        this.won = Side.EMPTY;
+    }
+    win(side) {
+        this.won = side;
     }
     isVaild(pos) {
         return pos.getx() >= 0 && pos.getx() < WIDTH
@@ -71,11 +75,13 @@ class ChessState {
     getFurthestPath(self, pos1, pos2) {
         var result = [];
         let definition = 10;
+        pos1 = new Position(pos1.getx() + 0.5, pos1.gety() + 0.5);
+        pos2 = new Position(pos2.getx() + 0.5, pos2.gety() + 0.5);
         let dx = (pos2.getx() - pos1.getx()) / definition;
         let dy = (pos2.gety() - pos1.gety()) / definition;
         for (let i = 1; i <= definition; i++) {
-            let x = pos1.getx() + Math.floor(dx * i);
-            let y = pos1.gety() + Math.floor(dy * i);
+            let x = Math.floor(pos1.getx() + (dx * i));
+            let y = Math.floor(pos1.gety() + (dy * i));
             let pos = new Position(x, y);
             let piece = this.getPiece(pos);
             if (piece == null)
@@ -95,14 +101,15 @@ class ChessState {
     getFurthestAttack(self, pos1, pos2) {
         var result = [];
         let definition = 10;
+        pos1 = new Position(pos1.getx() + 0.5, pos1.gety() + 0.5);
+        pos2 = new Position(pos2.getx() + 0.5, pos2.gety() + 0.5);
         let dx = (pos2.getx() - pos1.getx()) / definition;
         let dy = (pos2.gety() - pos1.gety()) / definition;
         for (let i = 1; i <= definition; i++) {
-            let x = pos1.getx() + Math.floor(dx * i);
-            let y = pos1.gety() + Math.floor(dy * i);
+            let x = Math.floor(pos1.getx() + (dx * i));
+            let y = Math.floor(pos1.gety() + (dy * i));
             let pos = new Position(x, y);
             let piece = this.getPiece(pos);
-            console.log(pos);
             if (piece == null)
                 return result;
             if (piece.getName() != 'empty') {
@@ -121,5 +128,28 @@ class ChessState {
         }
         return result;
     }
+}
+function setCookie(cname, cvalue) {
+    var d = new Date();
+    d.setTime(d.getTime() + (365 * 24 * 60 * 60 * 1000));
+    var expires = "expires=" + d.toUTCString();
+    document.cookie = cname + "=" + cvalue + ";" + expires + ";path=/";
+}
+function getCookie(cname) {
+    var name = cname + "=";
+    var ca = document.cookie.split(';');
+    for (var i = 0; i < ca.length; i++) {
+        var c = ca[i];
+        while (c.charAt(0) == ' ') {
+            c = c.substring(1);
+        }
+        if (c.indexOf(name) == 0) {
+            return c.substring(name.length, c.length);
+        }
+    }
+    return "";
+}
+function saveState(state) {
+    setCookie('board', '');
 }
 export { ChessState, Position, WIDTH, Side, HEIGHT };
