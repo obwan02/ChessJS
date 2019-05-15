@@ -33,6 +33,12 @@ class Empty extends Piece {
     getName() {
         return 'empty';
     }
+    clone() {
+        return new Empty(this.position);
+    }
+    getValue() {
+        return 0;
+    }
 }
 class Pawn extends Piece {
     constructor(pos, side) {
@@ -68,6 +74,14 @@ class Pawn extends Piece {
         super.move(state, pos);
         this.firstMove = false;
     }
+    clone() {
+        let a = new Pawn(this.position, this.getSide());
+        a.firstMove = this.firstMove;
+        return a;
+    }
+    getValue() {
+        return 1;
+    }
 }
 class Rook extends Piece {
     constructor(pos, side) {
@@ -86,6 +100,12 @@ class Rook extends Piece {
     getName() {
         return 'rook';
     }
+    clone() {
+        return new Rook(this.position, this.getSide());
+    }
+    getValue() {
+        return 5;
+    }
 }
 class Bishop extends Piece {
     constructor(pos, side) {
@@ -103,6 +123,12 @@ class Bishop extends Piece {
     }
     getName() {
         return 'bishop';
+    }
+    clone() {
+        return new Bishop(this.position, this.getSide());
+    }
+    getValue() {
+        return 3;
     }
 }
 class Knight extends Piece {
@@ -126,6 +152,12 @@ class Knight extends Piece {
     getName() {
         return 'knight';
     }
+    clone() {
+        return new Knight(this.position, this.getSide());
+    }
+    getValue() {
+        return 3;
+    }
 }
 class King extends Piece {
     constructor(pos, side) {
@@ -147,6 +179,12 @@ class King extends Piece {
     }
     getName() {
         return 'king';
+    }
+    clone() {
+        return new King(this.position, this.getSide());
+    }
+    getValue() {
+        return Infinity;
     }
 }
 class Queen extends Piece {
@@ -174,6 +212,12 @@ class Queen extends Piece {
     }
     getName() {
         return 'queen';
+    }
+    clone() {
+        return new Queen(this.position, this.getSide());
+    }
+    getValue() {
+        return 9;
     }
 }
 export { Piece, Pawn, Rook, Bishop, Knight, King, Queen, Empty };

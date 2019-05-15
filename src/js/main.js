@@ -1,6 +1,6 @@
 import { ChessState, WIDTH, HEIGHT, Side, Position } from "./game.js";
 import { draw, TILE_SIZE } from "./ui.js";
-import { Empty } from "./piece.js";
+import { AI } from "./ai.js";
 class GameManager {
     constructor() {
         this.state = new ChessState();
@@ -10,11 +10,16 @@ class GameManager {
         this.ctx = this.canvas.getContext("2d");
         this.selected = null;
         this.moves = null;
-        this.turn = Side.WHITE;
+        this.state.turn = Side.WHITE;
+        this.ai = new AI(Side.BLACK);
         var self = this;
         this.canvas.onclick = function (event) { self.onclick(self, event); };
     }
     onclick(self, event) {
+        if (this.state.turn == this.ai.side)
+            return;
+        if (this.state.won != Side.EMPTY)
+            return;
         if (self.selected)
             self.handleMove(event);
         else
@@ -24,7 +29,7 @@ class GameManager {
         let x = Math.floor(event.layerX / TILE_SIZE);
         let y = Math.floor(event.layerY / TILE_SIZE);
         let piece = this.state.getPiece(new Position(x, y));
-        if (piece.getName() != 'empty' && piece.getSide() == this.turn) {
+        if (piece.getName() != 'empty' && piece.getSide() == this.state.turn) {
             this.selected = piece.position;
             this.moves = piece.getMoves(this.state);
         }
@@ -35,7 +40,7 @@ class GameManager {
         //Board position
         let pos = new Position(x, y);
         //Handle deselection
-        if (!this.moves || this.selected.equals(pos) || this.state.getPiece(pos).getSide() == this.turn) {
+        if (!this.moves || this.selected.equals(pos) || this.state.getPiece(pos).getSide() == this.state.turn) {
             this.selected = null;
             this.moves = null;
             return;
@@ -46,15 +51,7 @@ class GameManager {
                 inMoves = true;
         });
         if (inMoves) {
-            console.log('a');
-            let target = this.state.getPiece(pos);
-            let piece = this.state.getPiece(this.selected);
-            let target_index = this.state.board.indexOf(target);
-            let piece_index = this.state.board.indexOf(piece);
-            piece.move(this.state, pos);
-            this.state.board[target_index] = new Empty(this.selected);
-            this.state.board[piece_index] = piece;
-            this.turn = this.turn == Side.WHITE ? Side.BLACK : Side.WHITE;
+            this.state.move(this.selected, pos);
         }
         if (this.state.won != Side.EMPTY) {
             console.log((this.state.won == Side.WHITE ? 'White' : 'Black') + ' has won');
@@ -69,6 +66,10 @@ function main() {
 }
 function render(manager, ctx) {
     requestAnimationFrame(() => render(manager, ctx));
+    if (manager.state.turn == manager.ai.side) {
+        console.log('ai turn');
+        manager.state = manager.ai.findBestMoves(manager.state.turn, manager.state, 0).state;
+    }
     draw(manager, ctx);
 }
 main();

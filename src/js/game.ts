@@ -39,6 +39,7 @@ class Position {
 }
 
 class ChessState {
+    turn: Side;
     board: Piece[];
     won: Side;
 
@@ -77,6 +78,22 @@ class ChessState {
         this.board[4 + 7*WIDTH] = new King(new Position(4, 7), Side.BLACK);
 
         this.won = Side.EMPTY;
+        this.turn = Side.WHITE;
+    }
+
+    move(start: Position, end: Position): number {
+        let target = this.getPiece(end);
+        let piece = this.getPiece(start);
+        
+        let target_index = this.board.indexOf(target);
+        let piece_index = this.board.indexOf(piece);
+        piece.move(this, end);
+        
+        this.board[target_index] = new Empty(start);
+        this.board[piece_index] = piece;
+
+        this.turn = this.turn == Side.WHITE ? Side.BLACK : Side.WHITE;
+        return piece.getValue();
     }
 
     win(side: Side) {
@@ -98,6 +115,10 @@ class ChessState {
         });
 
         return result;
+    }
+
+    getAll(side: Side): Piece[] {
+        return this.board.filter((i) => i.getSide() == side);
     }
 
     getFurthestPath(self: Piece, pos1: Position, pos2: Position): Position[] {
@@ -163,6 +184,19 @@ class ChessState {
             if(!dup) result.push(pos);
         }
 
+        return result;
+    }
+
+    
+
+    clone() {
+        let result = new ChessState();
+        for(let i = 0; i < this.board.length; i++) {
+            result.board[i] = this.board[i].clone()
+        }
+
+        result.turn = this.turn;
+        result.won = this.won;
         return result;
     }
 }

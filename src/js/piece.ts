@@ -30,7 +30,9 @@ abstract class Piece {
 
         return result;
     }
-    
+
+    abstract clone(): Piece;
+    abstract getValue(): number;
     abstract getMoves(state: ChessState): Position[];
     abstract getName(): string;
 }
@@ -43,6 +45,14 @@ class Empty extends Piece {
     getMoves(state: ChessState): Position[]{return null;}
     getName(): string {
         return 'empty';
+    }
+
+    clone() {
+        return new Empty(this.position);
+    }
+    
+    getValue() {
+        return 0;
     }
 }
 
@@ -87,6 +97,16 @@ class Pawn extends Piece {
         super.move(state, pos);
         this.firstMove = false;
     }
+
+    clone() {
+        let a = new Pawn(this.position, this.getSide());
+        a.firstMove = this.firstMove;
+        return a;
+    }
+
+    getValue() {
+        return 1;
+    }
 }
 
 class Rook extends Piece {
@@ -109,6 +129,14 @@ class Rook extends Piece {
     getName(): string {
         return 'rook';
     }
+
+    clone() {
+        return new Rook(this.position, this.getSide());
+    }
+
+    getValue() {
+        return 5;
+    }
 }
 
 class Bishop extends Piece {
@@ -130,6 +158,14 @@ class Bishop extends Piece {
 
     getName(): string {
         return 'bishop';
+    }
+
+    clone() {
+        return new Bishop(this.position, this.getSide());
+    }
+
+    getValue() {
+        return 3;
     }
 }
 
@@ -158,6 +194,14 @@ class Knight extends Piece {
     getName(): string {
         return 'knight';
     }
+
+    clone() {
+        return new Knight(this.position, this.getSide());
+    }
+
+    getValue() {
+        return 3;
+    }
 }
 
 class King extends Piece {
@@ -185,6 +229,14 @@ class King extends Piece {
 
     getName(): string {
         return 'king';
+    }
+
+    clone() {
+        return new King(this.position, this.getSide());
+    }
+
+    getValue() {
+        return Infinity;
     }
 }
 
@@ -219,6 +271,14 @@ class Queen extends Piece {
 
     getName(): string {
         return 'queen';
+    }
+
+    clone() {
+        return new Queen(this.position, this.getSide());
+    }
+
+    getValue() {
+        return 9;
     }
 }
 

@@ -1,5 +1,5 @@
 import GameManager from "./main.js"
-import { WIDTH, HEIGHT } from "./game.js"
+import { WIDTH, HEIGHT, Side } from "./game.js"
 
 const TILE_SIZE = 90;
 
@@ -79,8 +79,16 @@ function draw(manager: GameManager, ctx: CanvasRenderingContext2D) {
             let x=element.getx(), y=element.gety(); 
             ctx.drawImage(imgs['dot'], x*TILE_SIZE, y*TILE_SIZE, TILE_SIZE, TILE_SIZE);
         });
-    }
 
+    }
+    
+    if(manager.state.won != Side.EMPTY) {
+        let text = ((manager.state.won == Side.WHITE) ? 'White' : 'Black') + ' wins!';
+        ctx.fillStyle='#000000';
+        ctx.textAlign='center';
+        ctx.font='100px freemono'
+        ctx.fillText(text, WIDTH*TILE_SIZE/2, HEIGHT*TILE_SIZE/2);
+    }
 }
 
 export { draw, TILE_SIZE }
