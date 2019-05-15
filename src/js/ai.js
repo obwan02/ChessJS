@@ -11,18 +11,16 @@ class AI {
                 let score = cloneState.move(i.position, j);
                 if (state.turn != this.side)
                     score *= -1;
-                if (level < 2) {
-                    let result = this.findBestMoves(cloneState.turn, cloneState, level + 1);
-                    if (result) {
-                        score += result.score;
-                    }
-                }
-                else {
-                    resultTable.push({ 'score': score, 'state': cloneState,
-                        'piece': i, 'move': j });
-                }
+                resultTable.push({ 'move': j, 'piece': i,
+                    'score': score, 'state': cloneState });
             });
         });
+        if (level < 2) {
+            resultTable.forEach((i) => {
+                let e = this.findBestMoves(i.state.turn, i.state, level + 1);
+                i.score += e.score;
+            });
+        }
         resultTable.sort((a, b) => {
             return b.score - a.score;
         });
